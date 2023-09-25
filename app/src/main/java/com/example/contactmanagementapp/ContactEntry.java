@@ -14,7 +14,7 @@ public class ContactEntry {
     private String firstName;
     @NonNull
     private String lastName;
-    private int phoneNo;
+    private long phoneNo;
     private String email;
     @Ignore
     private Bitmap photo;
@@ -27,9 +27,9 @@ public class ContactEntry {
 
     public void setEmail(String email) {this.email = email;}
 
-    public int getPhoneNo() {return phoneNo;}
+    public long getPhoneNo() {return phoneNo;}
 
-    public void setPhoneNo(int phoneNo) {this.phoneNo = phoneNo;}
+    public void setPhoneNo(long phoneNo) {this.phoneNo = phoneNo;}
 
     public String getLastName() {return lastName;}
 

@@ -63,12 +63,12 @@ public class AddContactFragment extends Fragment {
             @Override
             public void onClick(View view) {
             if((firstName.getText().toString() == "") || (lastName.getText().toString()=="")) {
-                Toast.makeText(getActivity(), "First name and Last name must required", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "First name and Last name are required", Toast.LENGTH_SHORT).show();
             }
             else {
                 String inFirstName = firstName.getText().toString();
                 String inLastName = lastName.getText().toString();
-                int inPhoneNo = Integer.parseInt(phoneNo.getText().toString());
+                long inPhoneNo = Long.parseLong(phoneNo.getText().toString());
                 String inEmail = email.getText().toString();
 
                 ContactEntry contactEntry = new ContactEntry();
@@ -78,6 +78,9 @@ public class AddContactFragment extends Fragment {
                 contactEntry.setEmail(inEmail);
 
                 contactEntryDAO.insert(contactEntry);
+
+                //Todo App crashes if you try put in a name already in the DB (Primary key conflict)
+                // Need to add some kind of check wrapper around this
 
             }
         }

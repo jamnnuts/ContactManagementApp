@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.se.omapi.Session;
 import android.view.LayoutInflater;
@@ -12,11 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** This Fragment displays all contact list information. It acts as the main fragment that other functions are utilised through. */
 public class ContactListFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    List<ContactEntry> contacts;
 
     private String mParam1;
     private String mParam2;
@@ -49,15 +55,20 @@ public class ContactListFragment extends Fragment {
         ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
         Button addContactButton = rootView.findViewById(R.id.addContact);
+        ContactEntryDAO contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
+        contacts = contactEntryDAO.getAllContacts();
+        RecyclerView rv = rootView.findViewById(R.id.contactListRecyclerView);
+
+        rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,true));
+        ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts);
+        rv.setAdapter(adapter);
 
         addContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 sessionData.setClickedFragment(2);
             }
         });
-
 
         return rootView;
     }
