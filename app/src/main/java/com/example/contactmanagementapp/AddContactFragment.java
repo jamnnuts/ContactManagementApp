@@ -3,14 +3,18 @@ package com.example.contactmanagementapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +103,10 @@ public class AddContactFragment extends Fragment {
                 contactEntry.setPhoneNo(inPhoneNo);
                 contactEntry.setEmail(inEmail);
 
+                if (hasImage(photo)) {
+                    contactEntry.setPhoto(((BitmapDrawable)photo.getDrawable()).getBitmap());
+                    Log.d("Success","it worked."); // Check for Photo entry into database
+                }
                 contactEntryDAO.insert(contactEntry);
 
                 Toast.makeText(getActivity(), "Contact Created. ", Toast.LENGTH_SHORT).show();
@@ -124,5 +132,17 @@ public class AddContactFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private boolean hasImage(@NonNull ImageView view) {
+        Drawable drawable = view.getDrawable();
+        boolean hasImage = (drawable != null);
+
+        if (hasImage && (drawable instanceof BitmapDrawable)) {
+            hasImage = ((BitmapDrawable)drawable).getBitmap() != null;
+        }
+
+        return hasImage;
+
     }
 }
