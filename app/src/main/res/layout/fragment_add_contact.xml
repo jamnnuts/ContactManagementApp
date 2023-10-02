@@ -27,40 +27,33 @@
         app:layout_constraintBottom_toTopOf="@id/returnButton">
 
         <EditText
-            android:id="@+id/firstNameText"
+            android:id="@+id/nameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="First Name:"
+            android:hint="First Name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/lastNameText"/>
-        <EditText
-            android:id="@+id/lastNameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Last Name:"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/firstNameText"
-            app:layout_constraintBottom_toTopOf="@id/phoneNoText" />
+            app:layout_constraintBottom_toTopOf="@id/phoneNoText"/>
+
         <EditText
             android:id="@+id/phoneNoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Phone Number: "
+            android:hint="Phone Number"
+            android:inputType="number"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lastNameText"
+            app:layout_constraintTop_toBottomOf="@id/nameText"
             app:layout_constraintBottom_toTopOf="@id/emailText" />
         <EditText
             android:id="@+id/emailText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email"
+            android:hint="Email"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lastNameText"
+            app:layout_constraintTop_toBottomOf="@id/phoneNoText"
             app:layout_constraintBottom_toTopOf="@id/photoImage" />
         <ImageView
             android:id="@+id/photoImage"
