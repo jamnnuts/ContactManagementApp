@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="16dp"
     android:background="#E0E0E0">
     
@@ -15,11 +16,21 @@
         android:text="TextView"
         />
 
+    <!-- <ImageView
+        android:id="@+id/contactPicture"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:src="@tools:sample/avatars"
+
+        /> -->
+
     <Button
         android:id="@+id/editContactButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textSize="9dp"
         android:textColor="#1987ff"
         android:text="Edit"
         android:backgroundTint="@android:color/transparent"/>
@@ -29,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.1"
         android:textColor="#1987ff"
+        android:textSize="10dp"
         android:text="View"
         android:backgroundTint="@android:color/transparent"/>
 

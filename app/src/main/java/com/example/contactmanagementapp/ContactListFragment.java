@@ -1,5 +1,7 @@
 package com.example.contactmanagementapp;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
 import android.se.omapi.Session;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +96,7 @@ public class ContactListFragment extends Fragment {
 
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
         ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts);
+
         rv.setAdapter(adapter);
 
         addContactButton.setOnClickListener(new View.OnClickListener() {

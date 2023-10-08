@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class AddContactFragment extends Fragment {
+public class EditContactFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -44,7 +44,7 @@ public class AddContactFragment extends Fragment {
                 }
             });
 
-    public AddContactFragment() {
+    public EditContactFragment() {
         // Required empty public constructor
     }
 
@@ -69,7 +69,7 @@ public class AddContactFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_add_contact,container,false);
+        View rootView = inflater.inflate(R.layout.fragment_edit_contact,container,false);
         ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
 
         EditText name = rootView.findViewById(R.id.nameText);
@@ -77,42 +77,45 @@ public class AddContactFragment extends Fragment {
         EditText email = rootView.findViewById(R.id.emailText);
         photo = rootView.findViewById(R.id.photoImage);
         Button returnButton = rootView.findViewById(R.id.returnButton);
-        Button saveButton = rootView.findViewById(R.id.saveButton);
+        Button updateButton = rootView.findViewById(R.id.updateButton);
+        Button deleteButton = rootView.findViewById(R.id.deleteButton);
         Button photoCapture = rootView.findViewById(R.id.takePhotoButton);
 
         ContactEntryDAO contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
+        ContactEntry editContact = contactEntryDAO.findContactEntry(sessionData.clickedContactName.getValue().toString());
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        name.setText(editContact.getName());
+        phoneNo.setText(editContact.getPhoneNo());
+        email.setText(editContact.getEmail());
+        photo.setImageBitmap(editContact.getPhoto());
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if((name.getText().toString() == "") || (phoneNo.getText().toString() == "") || (email.getText().toString() == "")) {
-                Toast.makeText(getActivity(), "All boxes require Input", Toast.LENGTH_SHORT).show();
-            }
-            else if (contactEntryDAO.containsPrimaryKey(name.getText().toString())) {
-                Toast.makeText(getActivity(), "There is already a contact with the same first name and last name.", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                String inName = name.getText().toString();
-                String inPhoneNo = phoneNo.getText().toString();
-                String inEmail = email.getText().toString();
-
-                ContactEntry contactEntry = new ContactEntry();
-                contactEntry.setName(inName);
-                contactEntry.setPhoneNo(inPhoneNo);
-                contactEntry.setEmail(inEmail);
-
-                if (hasImage(photo)) {
-                    contactEntry.setPhoto(((BitmapDrawable)photo.getDrawable()).getBitmap());
-                    Log.d("Success","it worked."); // Check for Photo entry into database
+                if((name.getText().toString() == "") || (phoneNo.getText().toString() == "") || (email.getText().toString() == "")) {
+                    Toast.makeText(getActivity(), "All boxes require Input", Toast.LENGTH_SHORT).show();
                 }
-                contactEntryDAO.insert(contactEntry);
+                else {
+                    String inName = name.getText().toString();
+                    String inPhoneNo = phoneNo.getText().toString();
+                    String inEmail = email.getText().toString();
 
-                Toast.makeText(getActivity(), "Contact Created. ", Toast.LENGTH_SHORT).show();
+                    ContactEntry contactEntry = new ContactEntry();
+                    contactEntry.setName(inName);
+                    contactEntry.setPhoneNo(inPhoneNo);
+                    contactEntry.setEmail(inEmail);
 
-                // Previous fault of same primary key crashing should be solved with the new query
+                    if (hasImage(photo)) {
+                        contactEntry.setPhoto(((BitmapDrawable)photo.getDrawable()).getBitmap());
+                        Log.d("Success","it worked."); // Check for Photo entry into database
+                    }
+                    contactEntryDAO.update(contactEntry);
+
+                    Toast.makeText(getActivity(), "Contact updated. ", Toast.LENGTH_SHORT).show();
+
+                    // Previous fault of same primary key crashing should be solved with the new query
+                }
             }
-        }
-      });
+        });
 
         photoCapture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +123,14 @@ public class AddContactFragment extends Fragment {
                 Intent intent = new Intent();
                 intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                 photoCaptureLauncher.launch(intent);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               contactEntryDAO.delete(editContact);
+               sessionData.setClickedFragment(1);
             }
         });
 
