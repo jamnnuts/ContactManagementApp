@@ -15,6 +15,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     ContactListFragment contactListFragment = new ContactListFragment();
     AddContactFragment addContactFragment = new AddContactFragment();
+    EditContactFragment editContactFragment = new EditContactFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (contactsViewModel.getClickedFragment() == 2) {
                     loadAddContact();
+                }
+                if (contactsViewModel.getClickedFragment() == 3) {
+                    loadEditContact();
                 }
             }
         });
@@ -56,6 +60,18 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             fm.beginTransaction().replace(R.id.fragmentContainerMain, addContactFragment).commit();
+        }
+    }
+
+    public void loadEditContact() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment frag = fm.findFragmentById(R.id.fragmentContainerMain);
+
+        if (frag == null) {
+            fm.beginTransaction().add(R.id.fragmentContainerMain, editContactFragment).commit();
+        }
+        else {
+            fm.beginTransaction().replace(R.id.fragmentContainerMain, editContactFragment).commit();
         }
     }
 }

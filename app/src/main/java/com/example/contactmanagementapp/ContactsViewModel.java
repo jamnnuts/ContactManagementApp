@@ -12,10 +12,9 @@ public class ContactsViewModel extends ViewModel {
         clickedContactName = new MutableLiveData<String>();
 
         clickedFragment.setValue(0);
-        clickedContactName.setValue("default");
     }
-    public String getClickedContactName() {return clickedContactName.getValue();}
-    public void setClickedContactName(String contactName) {clickedContactName.setValue(contactName);}
+    public String getClickedContact() {return clickedContactName.getValue().toString();}
+    public void setClickedContact(String inContactName) {clickedContactName.setValue(inContactName);}
     public int getClickedFragment() { return clickedFragment.getValue();}
     public void setClickedFragment(int value) { clickedFragment.setValue(value);}
 

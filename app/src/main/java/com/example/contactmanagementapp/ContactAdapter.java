@@ -8,19 +8,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactVH> {
 
-    List<ContactEntry> contacts;
+    ArrayList<ContactEntry> contacts;
+    ContactInterface cListener;
 
-    public ContactAdapter(ArrayList<ContactEntry> contacts) { this.contacts = contacts;}
+    public ContactAdapter(ArrayList<ContactEntry> contacts, ContactInterface cListener) {
+        this.contacts = contacts;
+        this.cListener = cListener;
+    }
+
     @NonNull
     @Override
     public ContactVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.contact_list_item_layout,parent,false);
-        ContactVH contactVH = new ContactVH(view);
+        View view = layoutInflater.inflate(R.layout.contact_list_item_layout, parent, false);
+        ContactVH contactVH = new ContactVH(view, cListener);
         return contactVH;
     }
 
@@ -31,5 +35,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactVH> {
     }
 
     @Override
-    public int getItemCount() {return contacts.size();}
+    public int getItemCount() {
+        return contacts.size();
+    }
 }

@@ -1,7 +1,5 @@
 package com.example.contactmanagementapp;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,29 +10,24 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
-import android.se.omapi.Session;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** This Fragment displays all contact list information. It acts as the main fragment that other functions are utilised through. */
-public class ContactListFragment extends Fragment {
+public class ContactListFragment extends Fragment implements ContactInterface{
 
     Button addContactButton;
     Button importContactButton;
@@ -95,7 +88,7 @@ public class ContactListFragment extends Fragment {
         RecyclerView rv = rootView.findViewById(R.id.contactListRecyclerView);
 
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
-        ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts);
+        ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts,this);
 
         rv.setAdapter(adapter);
 
@@ -117,6 +110,14 @@ public class ContactListFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void editContact(String contactName) {
+        ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
+        sessionData.setClickedContact(contactName);
+        sessionData.setClickedFragment(3);
+
     }
 
     private void processImportContactResult(Intent data) {
@@ -208,5 +209,4 @@ public class ContactListFragment extends Fragment {
 
         contactEntryDAO.insert(importedEntry);
     }
-
 }

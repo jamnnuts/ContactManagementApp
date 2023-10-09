@@ -129,8 +129,9 @@ public class EditContactFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               contactEntryDAO.delete(editContact);
-               sessionData.setClickedFragment(1);
+                 Toast.makeText(getActivity(), "Contact Deleted: " + editContact.getName().toString(), Toast.LENGTH_SHORT).show();
+                contactEntryDAO.delete(editContact);
+                sessionData.setClickedFragment(1);
             }
         });
 

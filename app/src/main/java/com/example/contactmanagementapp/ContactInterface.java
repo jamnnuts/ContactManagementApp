@@ -1,5 +1,6 @@
 package com.example.contactmanagementapp;
 
 public interface ContactInterface {
-    void editContact(ContactEntry contactEntry);
+    void editContact(String contactName);
+
 }
