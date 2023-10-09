@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** This Fragment displays all contact list information. It acts as the main fragment that other functions are utilised through. */
-public class ContactListFragment extends Fragment implements ContactInterface{
+public class ContactListFragment extends Fragment {
 
     Button addContactButton;
     Button importContactButton;
@@ -88,7 +88,7 @@ public class ContactListFragment extends Fragment implements ContactInterface{
         RecyclerView rv = rootView.findViewById(R.id.contactListRecyclerView);
 
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
-        ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts,this);
+        ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts, sessionData);
 
         rv.setAdapter(adapter);
 
@@ -112,13 +112,6 @@ public class ContactListFragment extends Fragment implements ContactInterface{
         return rootView;
     }
 
-    @Override
-    public void editContact(String contactName) {
-        ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
-        sessionData.setClickedContact(contactName);
-        sessionData.setClickedFragment(3);
-
-    }
 
     private void processImportContactResult(Intent data) {
         Uri contactUri = data.getData();
