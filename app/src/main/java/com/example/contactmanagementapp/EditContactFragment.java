@@ -32,7 +32,10 @@ public class EditContactFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     ImageView photo;
-
+    EditText name;
+    EditText phoneNo;
+    EditText email;
+    ContactEntryDAO contactEntryDAO;
     ActivityResultLauncher<Intent> photoCaptureLauncher =
             registerForActivityResult( new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
@@ -65,6 +68,20 @@ public class EditContactFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
+
+        contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
+        ContactEntry editContact = contactEntryDAO.findContactEntry(sessionData.getClickedContact());
+
+        name.setText(editContact.getName());
+        phoneNo.setText(editContact.getPhoneNo());
+        email.setText(editContact.getEmail());
+        photo.setImageBitmap(editContact.getPhoto());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,22 +89,24 @@ public class EditContactFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_edit_contact,container,false);
         ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
 
-        EditText name = rootView.findViewById(R.id.nameText);
-        EditText phoneNo = rootView.findViewById(R.id.phoneNoText);
-        EditText email = rootView.findViewById(R.id.emailText);
+        name = rootView.findViewById(R.id.nameText);
+        phoneNo = rootView.findViewById(R.id.phoneNoText);
+        email = rootView.findViewById(R.id.emailText);
         photo = rootView.findViewById(R.id.photoImage);
+
         Button returnButton = rootView.findViewById(R.id.returnButton);
         Button updateButton = rootView.findViewById(R.id.updateButton);
         Button deleteButton = rootView.findViewById(R.id.deleteButton);
         Button photoCapture = rootView.findViewById(R.id.takePhotoButton);
 
-        ContactEntryDAO contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
-        ContactEntry editContact = contactEntryDAO.findContactEntry(sessionData.clickedContactName.getValue().toString());
+        contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
+        ContactEntry editContact = contactEntryDAO.findContactEntry(sessionData.getClickedContact());
 
         name.setText(editContact.getName());
         phoneNo.setText(editContact.getPhoneNo());
         email.setText(editContact.getEmail());
         photo.setImageBitmap(editContact.getPhoto());
+
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +114,7 @@ public class EditContactFragment extends Fragment {
                     Toast.makeText(getActivity(), "All boxes require Input", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    String inName = name.getText().toString();
+                    String inName = editContact.getName();
                     String inPhoneNo = phoneNo.getText().toString();
                     String inEmail = email.getText().toString();
 
@@ -108,11 +127,11 @@ public class EditContactFragment extends Fragment {
                         contactEntry.setPhoto(((BitmapDrawable)photo.getDrawable()).getBitmap());
                         Log.d("Success","it worked."); // Check for Photo entry into database
                     }
+
                     contactEntryDAO.update(contactEntry);
+                    Toast.makeText(getActivity(), "Contact updated. " + contactEntry.getName(), Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(getActivity(), "Contact updated. ", Toast.LENGTH_SHORT).show();
 
-                    // Previous fault of same primary key crashing should be solved with the new query
                 }
             }
         });
@@ -129,7 +148,7 @@ public class EditContactFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-                 Toast.makeText(getActivity(), "Contact Deleted: " + editContact.getName().toString(), Toast.LENGTH_SHORT).show();
+                 Toast.makeText(getActivity(), "Contact Deleted: " + editContact.getName(), Toast.LENGTH_SHORT).show();
                 contactEntryDAO.delete(editContact);
                 sessionData.setClickedFragment(1);
             }
@@ -138,7 +157,9 @@ public class EditContactFragment extends Fragment {
 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {sessionData.setClickedFragment(1);}
+            public void onClick(View view) {
+                sessionData.setClickedFragment(1);
+            }
         });
 
         return rootView;

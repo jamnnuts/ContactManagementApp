@@ -13,7 +13,7 @@ public class ContactsViewModel extends ViewModel {
 
         clickedFragment.setValue(0);
     }
-    public String getClickedContact() {return clickedContactName.getValue().toString();}
+    public String getClickedContact() {return clickedContactName.getValue();}
     public void setClickedContact(String inContactName) {clickedContactName.setValue(inContactName);}
     public int getClickedFragment() { return clickedFragment.getValue();}
     public void setClickedFragment(int value) { clickedFragment.setValue(value);}
