@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +45,8 @@ public class ContactListFragment extends Fragment implements RecyclerViewAdapter
     private static final int REQUEST_READ_CONTACT_PERMISSION = 3;
     ContactEntryDAO contactEntryDAO;
 
-    ActivityResultLauncher<Intent> importContactLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    processImportContactResult(data);
-                }
-            });
+    RecyclerViewAdapter adapter;
+
 
     public ContactListFragment() {
         // Required empty public constructor
@@ -83,12 +78,21 @@ public class ContactListFragment extends Fragment implements RecyclerViewAdapter
         addContactButton = rootView.findViewById(R.id.addContact);
         importContactButton = rootView.findViewById(R.id.importContacts);
 
+        ActivityResultLauncher<Intent> importContactLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        processImportContactResult(data);
+                    }
+                });
+
         contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
         contacts = (ArrayList<ContactEntry>) contactEntryDAO.getAllContacts();
 
         RecyclerView rv = rootView.findViewById(R.id.contactListRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(contacts,this);
+        adapter = new RecyclerViewAdapter(contacts,this);
         rv.setAdapter(adapter);
 
         addContactButton.setOnClickListener(new View.OnClickListener() {
@@ -204,6 +208,9 @@ public class ContactListFragment extends Fragment implements RecyclerViewAdapter
         }
         importedEntry.setPhoneNo(result);
 
+        File photoFile = new File(getActivity().getFilesDir(), ("photo" + contactEntryDAO.countNumEntry() + ".jpg"));
+        Log.d("Check photoFile string", photoFile.toString());
+        importedEntry.setPhotoFile(photoFile.toString());
         contactEntryDAO.insert(importedEntry);
     }
 }

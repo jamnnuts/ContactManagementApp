@@ -7,18 +7,26 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-@Entity(primaryKeys = {"name"},tableName = "contacts")
+
+import java.io.File;
+
+@Entity(tableName = "contacts")
 public class ContactEntry {
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     @NonNull
     private String name;
     private String phoneNo;
     private String email;
-    @Ignore
-    private Bitmap photo;
+    private String photoFile;
 
-    public Bitmap getPhoto() {return photo;}
+    public int getId(){return id;}
+    public void setId(int id) {this.id = id;}
 
-    public void setPhoto(Bitmap photo) {this.photo = photo;}
+    public String getPhotoFile() {return photoFile;}
+
+    public void setPhotoFile(String photoFile) {this.photoFile = photoFile;}
 
     public String getEmail() {return email;}
 

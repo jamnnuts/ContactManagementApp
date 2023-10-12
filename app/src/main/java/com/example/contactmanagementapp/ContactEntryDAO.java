@@ -22,7 +22,7 @@ public interface ContactEntryDAO {
     boolean containsPrimaryKey(String name);
     @Query("SELECT * FROM contacts WHERE name = :name")
     ContactEntry findContactEntry(String name);
+    @Query("SELECT count(*) FROM contacts")
+    int countNumEntry();
 
-    //Todo Do we need parameter specific getters? Doesn't say anything about searching for contacts via name/number.
-    // My understanding is just get every contact in the DB and display on the RC view.
 }

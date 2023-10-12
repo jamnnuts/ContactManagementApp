@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 public class ContactsViewModel extends ViewModel {
     public MutableLiveData<Integer> clickedFragment;
     public MutableLiveData<String> clickedContactName;
+    ;
 
     public ContactsViewModel() {
         clickedFragment = new MutableLiveData<Integer>();

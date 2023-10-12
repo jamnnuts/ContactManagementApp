@@ -2,14 +2,19 @@ package com.example.contactmanagementapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 
 public class EditContactFragment extends Fragment {
@@ -31,21 +37,13 @@ public class EditContactFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
-    ImageView photo;
+    String photoString;
+    File photoFile;
+    ImageView photoView;
     EditText name;
     EditText phoneNo;
     EditText email;
     ContactEntryDAO contactEntryDAO;
-    ActivityResultLauncher<Intent> photoCaptureLauncher =
-            registerForActivityResult( new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    Bitmap image = (Bitmap) data.getExtras().get("data");
-                    if (image != null) {
-                        photo.setImageBitmap(image);
-                    }
-                }
-            });
 
     public EditContactFragment() {
         // Required empty public constructor
@@ -77,10 +75,12 @@ public class EditContactFragment extends Fragment {
         contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
         ContactEntry editContact = contactEntryDAO.findContactEntry(sessionData.getClickedContact());
 
+        Bitmap photoBitMap = BitmapFactory.decodeFile(editContact.getPhotoFile());
+
         name.setText(editContact.getName());
         phoneNo.setText(editContact.getPhoneNo());
         email.setText(editContact.getEmail());
-        photo.setImageBitmap(editContact.getPhoto());
+        photoView.setImageBitmap(photoBitMap);
     }
 
     @Override
@@ -89,10 +89,18 @@ public class EditContactFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_edit_contact,container,false);
         ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
 
+        ActivityResultLauncher<Intent> photoCaptureLauncher =
+                registerForActivityResult( new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        processPhotoResults(data);
+                    }
+                });
+
         name = rootView.findViewById(R.id.nameText);
         phoneNo = rootView.findViewById(R.id.phoneNoText);
         email = rootView.findViewById(R.id.emailText);
-        photo = rootView.findViewById(R.id.photoImage);
+        photoView = rootView.findViewById(R.id.photoImage);
 
         Button returnButton = rootView.findViewById(R.id.returnButton);
         Button updateButton = rootView.findViewById(R.id.updateButton);
@@ -101,11 +109,13 @@ public class EditContactFragment extends Fragment {
 
         contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
         ContactEntry editContact = contactEntryDAO.findContactEntry(sessionData.getClickedContact());
+        photoString = editContact.getPhotoFile();
+        Bitmap photoBitMap = BitmapFactory.decodeFile(photoString);
 
         name.setText(editContact.getName());
         phoneNo.setText(editContact.getPhoneNo());
         email.setText(editContact.getEmail());
-        photo.setImageBitmap(editContact.getPhoto());
+        photoView.setImageBitmap(photoBitMap);
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,17 +124,18 @@ public class EditContactFragment extends Fragment {
                     Toast.makeText(getActivity(), "All boxes require Input", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    String inName = editContact.getName();
+                    String inName = name.getText().toString();
                     String inPhoneNo = phoneNo.getText().toString();
                     String inEmail = email.getText().toString();
 
                     ContactEntry contactEntry = new ContactEntry();
+                    contactEntry.setId(editContact.getId());
                     contactEntry.setName(inName);
                     contactEntry.setPhoneNo(inPhoneNo);
                     contactEntry.setEmail(inEmail);
 
-                    if (hasImage(photo)) {
-                        contactEntry.setPhoto(((BitmapDrawable)photo.getDrawable()).getBitmap());
+                    if (hasImage(photoView)) {
+                        contactEntry.setPhotoFile(photoString);
                         Log.d("Success","it worked."); // Check for Photo entry into database
                     }
 
@@ -139,8 +150,21 @@ public class EditContactFragment extends Fragment {
         photoCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                photoFile = new File(getActivity().getFilesDir(), "photo" + (editContact.getId() - 1) + ".jpg");
+                Log.d("Check photoFile string", photoFile.toString());
+
                 Intent intent = new Intent();
+                Uri cameraUri = FileProvider.getUriForFile(getActivity().getApplicationContext(), getActivity().getPackageName() + ".fileprovider", photoFile);
                 intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
+
+                PackageManager pm = getActivity().getPackageManager();
+                for (ResolveInfo a : pm.queryIntentActivities(
+                        intent, PackageManager.MATCH_DEFAULT_ONLY)) {
+
+                    getActivity().grantUriPermission(a.activityInfo.packageName, cameraUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+
                 photoCaptureLauncher.launch(intent);
             }
         });
@@ -175,5 +199,11 @@ public class EditContactFragment extends Fragment {
 
         return hasImage;
 
+    }
+
+    protected void processPhotoResults(Intent data) {
+        Bitmap photo = BitmapFactory.decodeFile(photoFile.toString());
+        photoString = photoFile.toString();
+        photoView.setImageBitmap(photo);
     }
 }

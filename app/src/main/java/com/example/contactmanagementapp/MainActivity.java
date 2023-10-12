@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 if (contactsViewModel.getClickedFragment() == 3) {
                     loadEditContact();
                 }
+
             }
         });
     }

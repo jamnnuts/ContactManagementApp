@@ -1,6 +1,8 @@
 package com.example.contactmanagementapp;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +37,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.contactVH holder,int position) {
+        Bitmap photo = BitmapFactory.decodeFile(contacts.get(position).getPhotoFile());
+
         holder.contactName.setText(contacts.get(position).getName());
-        holder.contactPhoto.setImageBitmap(contacts.get(position).getPhoto());
+        holder.contactPhoto.setImageBitmap(photo);
         holder.editContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

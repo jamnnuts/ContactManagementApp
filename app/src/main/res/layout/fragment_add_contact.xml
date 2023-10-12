@@ -12,6 +12,7 @@
         android:text="Create new contact"
         android:textSize="40sp"
         android:textStyle="bold"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,22 +20,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/addContactLL"
         android:orientation="vertical"
         android:gravity="center"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addContactText"
-        app:layout_constraintBottom_toTopOf="@id/returnButton">
+        app:layout_constraintBottom_toTopOf="@id/saveReturnButtonCLayout">
 
         <EditText
             android:id="@+id/nameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="First Name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/phoneNoText"/>
+            android:layout_weight="1"
+            />
 
         <EditText
             android:id="@+id/phoneNoText"
@@ -42,27 +44,18 @@
             android:layout_height="wrap_content"
             android:hint="Phone Number"
             android:inputType="number"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/nameText"
-            app:layout_constraintBottom_toTopOf="@id/emailText" />
+            android:layout_weight="1"/>
         <EditText
             android:id="@+id/emailText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/phoneNoText"
-            app:layout_constraintBottom_toTopOf="@id/photoImage" />
+            android:layout_weight="1"/>
         <ImageView
             android:id="@+id/photoImage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addContactText"
-            app:layout_constraintBottom_toTopOf="@id/takePhotoButton"
+            android:layout_height="0dp"
+            android:layout_weight="10"
             tools:src="@tools:sample/avatars"/>
         <Button
             android:id="@+id/takePhotoButton"
@@ -71,14 +64,20 @@
             android:text="New photo"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/photoImage"
-            app:layout_constraintBottom_toBottomOf="parent"
-
+            android:layout_weight="1"
             />
 
     </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/saveReturnButtonCLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addContactLL"
+        app:layout_constraintBottom_toBottomOf="parent">
+
     <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
@@ -88,7 +87,7 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/returnButton"
-        app:layout_constraintTop_toBottomOf="@id/addContactLL"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         />
     <Button
@@ -100,9 +99,11 @@
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addContactLL"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!--Todo I don't know how to make the text centered down the middle, only the linear layout centered in the screen? -->
 
