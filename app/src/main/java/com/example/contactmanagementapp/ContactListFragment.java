@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,16 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** This Fragment displays all contact list information. It acts as the main fragment that other functions are utilised through. */
-public class ContactListFragment extends Fragment {
+public class ContactListFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener{
 
     Button addContactButton;
     Button importContactButton;
-
+    ArrayList<ContactEntry> contacts;
+    ContactsViewModel sessionData;
     ContactEntry importedEntry = new ContactEntry();
     int contactId;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    List<ContactEntry> contacts;
 
     private String mParam1;
     private String mParam2;
@@ -77,19 +78,17 @@ public class ContactListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
+        sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
         View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
         addContactButton = rootView.findViewById(R.id.addContact);
         importContactButton = rootView.findViewById(R.id.importContacts);
 
         contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
-        contacts = contactEntryDAO.getAllContacts();
+        contacts = (ArrayList<ContactEntry>) contactEntryDAO.getAllContacts();
 
         RecyclerView rv = rootView.findViewById(R.id.contactListRecyclerView);
-
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
-        ContactAdapter adapter = new ContactAdapter((ArrayList<ContactEntry>) contacts, sessionData);
-
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(contacts,this);
         rv.setAdapter(adapter);
 
         addContactButton.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +111,11 @@ public class ContactListFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void OnItemClick(ContactEntry editContact) {
+        sessionData.setClickedContact(editContact.getName());
+        sessionData.setClickedFragment(3);
+    }
 
     private void processImportContactResult(Intent data) {
         Uri contactUri = data.getData();

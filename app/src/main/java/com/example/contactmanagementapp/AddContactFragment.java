@@ -32,6 +32,9 @@ public class AddContactFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     ImageView photo;
+    EditText name;
+    EditText phoneNo;
+    EditText email;
 
     ActivityResultLauncher<Intent> photoCaptureLauncher =
             registerForActivityResult( new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -65,6 +68,14 @@ public class AddContactFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        name.setText("");
+        phoneNo.setText("");
+        email.setText("");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,13 +83,15 @@ public class AddContactFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_add_contact,container,false);
         ContactsViewModel sessionData = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
 
-        EditText name = rootView.findViewById(R.id.nameText);
-        EditText phoneNo = rootView.findViewById(R.id.phoneNoText);
-        EditText email = rootView.findViewById(R.id.emailText);
+        name = rootView.findViewById(R.id.nameText);
+        phoneNo = rootView.findViewById(R.id.phoneNoText);
+        email = rootView.findViewById(R.id.emailText);
         photo = rootView.findViewById(R.id.photoImage);
         Button returnButton = rootView.findViewById(R.id.returnButton);
         Button saveButton = rootView.findViewById(R.id.saveButton);
         Button photoCapture = rootView.findViewById(R.id.takePhotoButton);
+
+
 
         ContactEntryDAO contactEntryDAO = ContactDBInstance.getDatabase(getContext()).contactEntryDAO();
 
@@ -97,6 +110,7 @@ public class AddContactFragment extends Fragment {
                 String inEmail = email.getText().toString();
 
                 ContactEntry contactEntry = new ContactEntry();
+
                 contactEntry.setName(inName);
                 contactEntry.setPhoneNo(inPhoneNo);
                 contactEntry.setEmail(inEmail);
@@ -108,8 +122,6 @@ public class AddContactFragment extends Fragment {
                 contactEntryDAO.insert(contactEntry);
 
                 Toast.makeText(getActivity(), "Contact Created. ", Toast.LENGTH_SHORT).show();
-
-                // Previous fault of same primary key crashing should be solved with the new query
             }
         }
       });
